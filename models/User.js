@@ -67,7 +67,7 @@ userSchema.methods.generateToken = function(cb) {
     const user = this;
 
     // jsonwebtoken을 이용해서 토큰을 생성하기
-    const token = jwt.sign(user._id.toHexString(), 'secterToken');
+    const token = jwt.sign(user._id.toHexString(), 'secretToken');
 
     user.token = token;
     user.save().then((user) => {
@@ -76,6 +76,21 @@ userSchema.methods.generateToken = function(cb) {
     })
 }
 
+userSchema.methods.findByToken = function(token, cb) {
+
+    // 토큰을 decode한다
+    jwt.verify(token, 'secretToken', function(err, decoded) {
+        // 유저 아이디를 이용해서 유저를 찾은 다음
+        // 클라이언트에서 가져온 토큰과 데이터베이스에 보관된 토큰이 일치하는지 확인
+
+        User.findOne({_id: decoded, token: token}).then((foundUser) => {
+            if(!foundUser) return cb(err)
+            cb(null, foundUser)
+        })
+    })
+}
+
 const User = mongoose.model('User', userSchema);
+
 
 module.exports = { User}
