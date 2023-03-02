@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const app = express()
-const port = 3000
+const port = 8000
 // Express 4.x 에는 body-parser
 // const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
